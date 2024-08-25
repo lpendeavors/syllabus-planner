@@ -65,15 +65,24 @@ jobs:
     - name: Retrieve Cloud Run API URL
       id: get-api-url
       run: |
-        echo "REACT_APP_API_URL=$(gcloud run services describe api-app --region ${{ secrets.GCP_REGION }} --format 'value(status.url)')" >> $GITHUB_ENV
+        echo "API_URL=$(gcloud run services describe api-app --region ${{ secrets.GCP_REGION }} --format 'value(status.url)')" >> $GITHUB_ENV
 
-    # Step 3: Build and push Docker image for React app
+    # Step 3: Build React app using the dynamic API URL
     - name: Build and push Docker image for React app
       run: |
-        npx nx build uploader --configuration=production
-        docker build -t ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/react-app:latest -f ./apps/uploader/Dockerfile \
-          --build-arg REACT_APP_API_URL=${{ env.REACT_APP_API_URL }}/api .
+        API_URL=${{ env.API_URL }}/api
+        echo "REACT_APP_API_URL=$API_URL" > .env
+        npx nx build uploader --prod
+        docker build -t ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/react-app:latest -f ./apps/uploader/Dockerfile .
         docker push ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/react-app:latest
+
+    # Ensure the React app has unauthenticated access permission
+    - name: Allow Unauthenticated Access to React App
+      run: |
+        gcloud run services add-iam-policy-binding react-app \
+          --region ${{ secrets.GCP_REGION }} \
+          --member="allUsers" \
+          --role="roles/run.invoker"
 
     - name: Deploy React app to Cloud Run
       run: |
