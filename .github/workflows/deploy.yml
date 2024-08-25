@@ -25,20 +25,36 @@ jobs:
         workload_identity_provider: "projects/372381120848/locations/global/workloadIdentityPools/github-actions-pool-2/providers/github-actions-provider-2"
         service_account: "github-actions@syllabusplanner-5b508.iam.gserviceaccount.com"
 
-    - name: Set up Google Cloud SDK
-      uses: google-github-actions/setup-gcloud@v1
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
       with:
-        project_id: ${{ secrets.GCP_PROJECT }}
+        node-version: '20'  # Use the latest stable Node.js version
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build React app
+      run: npm run build --workspace=uploader  # Assuming NX workspace
 
     - name: Build and push Docker image for React app
       run: |
         docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/react-app ./apps/uploader
         docker push gcr.io/${{ secrets.GCP_PROJECT }}/react-app
 
+    - name: Build NestJS API
+      run: npm run build --workspace=api  # Assuming NX workspace
+
     - name: Build and push Docker image for API
       run: |
         docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/api-app ./apps/api
         docker push gcr.io/${{ secrets.GCP_PROJECT }}/api-app
+
+    - name: Set up Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        project_id: ${{ secrets.GCP_PROJECT }}
+        install_components: 'beta'
+        service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
     - name: Deploy React app to Cloud Run
       run: |
