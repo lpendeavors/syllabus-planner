@@ -28,21 +28,21 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '20'  # Use the latest stable Node.js version
+        node-version: '20'
 
     - name: Install dependencies
       run: npm install
 
-    - name: Build React app
-      run: npm run build --workspace=uploader  # Assuming NX workspace
+    - name: Build React app using Nx
+      run: npx nx build uploader
 
     - name: Build and push Docker image for React app
       run: |
         docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/react-app ./apps/uploader
         docker push gcr.io/${{ secrets.GCP_PROJECT }}/react-app
 
-    - name: Build NestJS API
-      run: npm run build --workspace=api  # Assuming NX workspace
+    - name: Build NestJS API using Nx
+      run: npx nx build api
 
     - name: Build and push Docker image for API
       run: |
@@ -53,8 +53,6 @@ jobs:
       uses: google-github-actions/setup-gcloud@v1
       with:
         project_id: ${{ secrets.GCP_PROJECT }}
-        install_components: 'beta'
-        service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
     - name: Deploy React app to Cloud Run
       run: |
@@ -73,3 +71,4 @@ jobs:
           --region ${{ secrets.GCP_REGION }} \
           --allow-unauthenticated \
           --port 3000
+          --set-env-vars OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
