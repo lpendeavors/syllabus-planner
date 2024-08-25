@@ -68,12 +68,12 @@ jobs:
       id: get-api-url
       run: |
         API_URL=$(gcloud run services describe api-app --region ${{ secrets.GCP_REGION }} --format 'value(status.url)')
-        echo "REACT_APP_API_URL=$API_URL/api" >> $GITHUB_ENV
+        echo "REACT_APP_API_URL=$API_URL" >> $GITHUB_ENV
 
     # Step 3: Build React app using the dynamic API URL
     - name: Build React app using Nx with API URL
       run: |
-        echo "REACT_APP_API_URL=${{ env.REACT_APP_API_URL }}" >> .env
+        echo "REACT_APP_API_URL=${{ env.REACT_APP_API_URL }}/api" >> .env
         npx nx build uploader
 
     - name: Build and push Docker image for React app
