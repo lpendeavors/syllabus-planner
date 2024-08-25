@@ -22,7 +22,7 @@ jobs:
       uses: google-github-actions/auth@v1
       with:
         create_credentials_file: true
-        workload_identity_provider: "github-actions-provider-2"
+        workload_identity_provider: "projects/372381120848/locations/global/workloadIdentityPools/github-actions-pool-2/providers/github-actions-provider-2"
         service_account: "github-actions@syllabusplanner-5b508.iam.gserviceaccount.com"
 
     - name: Set up Google Cloud SDK
