@@ -1,10 +1,27 @@
-# Stage 1: Serve the pre-built React app using nginx
+# Stage 1: Build the React app
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application code
+COPY . .
+
+# Build the React app
+RUN npx nx build uploader --prod
+
+# Stage 2: Serve the pre-built React app using nginx
 FROM nginx:alpine AS production
 
-# Copy the build output from dist/apps/uploader to the nginx html directory
-COPY dist/apps/uploader /usr/share/nginx/html
+# Copy the build output from the first stage to the nginx html directory
+COPY --from=builder /app/dist/apps/uploader /usr/share/nginx/html
 
-# Expose the port
+# Expose the port Nginx will serve on
 EXPOSE 80
 
 # Start nginx server
