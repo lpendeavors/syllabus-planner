@@ -57,7 +57,7 @@ jobs:
     - name: Deploy React app to Cloud Run
       run: |
         gcloud run deploy react-app \
-          --image gcr.io/${{ secrets.GCP_PROJECT }}/react-app \
+          --image us-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/react-app:latest \
           --platform managed \
           --region ${{ secrets.GCP_REGION }} \
           --allow-unauthenticated \
@@ -66,7 +66,7 @@ jobs:
     - name: Deploy API to Cloud Run
       run: |
         gcloud run deploy api-app \
-          --image gcr.io/${{ secrets.GCP_PROJECT }}/api-app \
+          --image us-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/api-app:latest \
           --platform managed \
           --region ${{ secrets.GCP_REGION }} \
           --allow-unauthenticated \
