@@ -21,11 +21,10 @@ jobs:
     - name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v2
       with:
-        create_credentials_file: true
-        workload_identity_provider: "https://iam.googleapis.com/projects/372381120848/locations/global/workloadIdentityPools/github-actions-pool-2/providers/github-actions-provider-2"
-        service_account: "github-actions@syllabusplanner-5b508.iam.gserviceaccount.com"
-        audience: "https://iam.googleapis.com/projects/372381120848/locations/global/workloadIdentityPools/github-actions-pool-2/providers/github-actions-provider-2"
-
+        workload_identity_provider: "//iam.googleapis.com/projects/372381120848/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider"
+        service_account: "cicd-126@syllabusplanner-5b508.iam.gserviceaccount.com"
+        audience: "//iam.googleapis.com/projects/372381120848/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider"
+        
     - name: Set up Google Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
       with:
