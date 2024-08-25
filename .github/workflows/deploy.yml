@@ -70,8 +70,7 @@ jobs:
     # Step 3: Build React app using the dynamic API URL
     - name: Build and push Docker image for React app
       run: |
-        API_URL=${{ env.API_URL }}/api
-        echo "REACT_APP_API_URL=$API_URL" > .env
+        echo "REACT_APP_API_URL=${{ env.API_URL }}/api" >> .env
         npx nx build uploader --prod
         docker build -t ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/react-app:latest -f ./apps/uploader/Dockerfile .
         docker push ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/react-app:latest
