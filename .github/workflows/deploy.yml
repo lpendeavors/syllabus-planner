@@ -39,7 +39,7 @@ jobs:
     - name: Build and push Docker image for React app
       run: |
         docker build -t us-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/react-app:latest -f ./apps/uploader/Dockerfile .
-        docker push us-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/api-app
+        docker push us-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/react-app
 
     - name: Build NestJS API using Nx
       run: npx nx build api
@@ -47,7 +47,7 @@ jobs:
     - name: Build and push Docker image for API
       run: |
         docker build -t us-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/api-app:latest -f ./apps/api/Dockerfile .
-        docker push us-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/react-app
+        docker push us-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/api-app
 
     - name: Set up Google Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
