@@ -73,7 +73,7 @@ jobs:
     # Step 3: Build and deploy the React app using the API URL
     - name: Build React app using Nx with API URL
       run: |
-        echo "REACT_APP_API_URL=${{ env.API_URL }}" >> .env
+        echo "REACT_APP_API_URL=${{ env.API_URL }}/api" >> .env
         npx nx build uploader
 
     - name: Build and push Docker image for React app
