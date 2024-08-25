@@ -32,7 +32,7 @@ jobs:
         gcloud config set project ${{ secrets.GCP_PROJECT }}
 
     - name: Configure Docker to Authenticate with GCR
-      run: gcloud auth configure-docker us-central1-docker.pkg.dev
+      run: gcloud auth configure-docker ${{ secrets.GCP_REGION }}-docker.pkg.dev
 
     - name: Set up Node.js
       uses: actions/setup-node@v3
@@ -42,44 +42,51 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Build React app using Nx
-      run: npx nx build uploader
-
-    - name: Build and push Docker image for React app
-      run: |
-        docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/react-app:latest -f ./apps/uploader/Dockerfile .
-        docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/react-app:latest
-
+    # Step 1: Build and deploy the NestJS API first
     - name: Build NestJS API using Nx
       run: npx nx build api
 
     - name: Build and push Docker image for API
       run: |
-        docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/api-app:latest -f ./apps/api/Dockerfile .
-        docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/api-app:latest
-
-    - name: Set up Google Cloud SDK
-      uses: google-github-actions/setup-gcloud@v1
-      with:
-        project_id: ${{ secrets.GCP_PROJECT }}
-
-    - name: Deploy React app to Cloud Run
-      run: |
-        gcloud run deploy react-app \
-          --image us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/react-app:latest \
-          --platform managed \
-          --region ${{ secrets.GCP_REGION }} \
-          --allow-unauthenticated \
-          --port 80 \
-          --quiet
+        docker build -t ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/api-app:latest -f ./apps/api/Dockerfile .
+        docker push ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/api-app:latest
 
     - name: Deploy API to Cloud Run
+      id: deploy-api
       run: |
         gcloud run deploy api-app \
-          --image us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/api-app:latest \
+          --image ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/api-app:latest \
           --platform managed \
           --region ${{ secrets.GCP_REGION }} \
           --allow-unauthenticated \
           --port 3000 \
           --set-env-vars OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
+          --quiet
+
+    # Step 2: Retrieve the API URL after deployment
+    - name: Retrieve Cloud Run API URL
+      id: get-api-url
+      run: |
+        API_URL=$(gcloud run services describe api-app --region ${{ secrets.GCP_REGION }} --format 'value(status.url)')
+        echo "API_URL=$API_URL" >> $GITHUB_ENV
+
+    # Step 3: Build and deploy the React app using the API URL
+    - name: Build React app using Nx with API URL
+      run: |
+        echo "REACT_APP_API_URL=${{ env.API_URL }}" >> .env
+        npx nx build uploader
+
+    - name: Build and push Docker image for React app
+      run: |
+        docker build -t ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/react-app:latest -f ./apps/uploader/Dockerfile .
+        docker push ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/react-app:latest
+
+    - name: Deploy React app to Cloud Run
+      run: |
+        gcloud run deploy react-app \
+          --image ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/react-app:latest \
+          --platform managed \
+          --region ${{ secrets.GCP_REGION }} \
+          --allow-unauthenticated \
+          --port 80 \
           --quiet
