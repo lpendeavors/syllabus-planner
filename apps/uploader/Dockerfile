@@ -3,11 +3,11 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package.json and package-lock.json (or yarn.lock if you're using Yarn)
-COPY package*.json ./
+# Copy the root-level package.json and package-lock.json
+COPY package.json package-lock.json ./
 
-# Install dependencies
-RUN npm install --frozen-lockfile --prefer-offline
+# Install dependencies for the entire monorepo (including uploader)
+RUN npm install
 
 # Copy the rest of the application code
 COPY . .
@@ -21,8 +21,8 @@ FROM nginx:alpine AS production
 # Copy the build output from the first stage to the nginx html directory
 COPY --from=builder /app/dist/apps/uploader /usr/share/nginx/html
 
-# Expose the port that Nginx will serve on
+# Expose the port Nginx will serve on
 EXPOSE 80
 
-# Start Nginx server
+# Start nginx server
 CMD ["nginx", "-g", "daemon off;"]
