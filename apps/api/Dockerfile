@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Build the NestJS app
-RUN npx nx build api
+RUN npx nx build api --configuration=production --skip-nx-cache
 
 # Stage 2: Create production image
 FROM node:20-alpine AS production

@@ -13,7 +13,7 @@ RUN npm install
 COPY . .
 
 # Build the React app using Nx for production
-RUN npx nx build uploader --configuration=production
+RUN npx nx build uploader --configuration=production --skip-nx-cache
 
 # Stage 2: Serve the pre-built React app using nginx
 FROM nginx:alpine AS production
