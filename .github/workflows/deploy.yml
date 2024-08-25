@@ -32,7 +32,7 @@ jobs:
         gcloud config set project ${{ secrets.GCP_PROJECT }}
 
     - name: Configure Docker to Authenticate with GCR
-      run: gcloud auth configure-docker us-docker.pkg.dev
+      run: gcloud auth configure-docker us-central1-docker.pkg.dev
 
     - name: Set up Node.js
       uses: actions/setup-node@v3
@@ -47,16 +47,16 @@ jobs:
 
     - name: Build and push Docker image for React app
       run: |
-        docker build -t us-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/react-app:latest -f ./apps/uploader/Dockerfile .
-        docker push us-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/react-app:latest
+        docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/react-app:latest -f ./apps/uploader/Dockerfile .
+        docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/react-app:latest
 
     - name: Build NestJS API using Nx
       run: npx nx build api
 
     - name: Build and push Docker image for API
       run: |
-        docker build -t us-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/api-app:latest -f ./apps/api/Dockerfile .
-        docker push us-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/api-app:latest
+        docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/api-app:latest -f ./apps/api/Dockerfile .
+        docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/api-app:latest
 
     - name: Set up Google Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
@@ -66,7 +66,7 @@ jobs:
     - name: Deploy React app to Cloud Run
       run: |
         gcloud run deploy react-app \
-          --image us-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/react-app:latest \
+          --image us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/react-app:latest \
           --platform managed \
           --region ${{ secrets.GCP_REGION }} \
           --allow-unauthenticated \
@@ -76,7 +76,7 @@ jobs:
     - name: Deploy API to Cloud Run
       run: |
         gcloud run deploy api-app \
-          --image us-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/api-app:latest \
+          --image us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/syllabus-planner/api-app:latest \
           --platform managed \
           --region ${{ secrets.GCP_REGION }} \
           --allow-unauthenticated \
