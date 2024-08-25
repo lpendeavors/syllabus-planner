@@ -38,7 +38,7 @@ jobs:
 
     - name: Build and push Docker image for React app
       run: |
-        docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/react-app ./apps/uploader/Dockerfile .
+        docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/react-app -f ./apps/uploader/Dockerfile .
         docker push gcr.io/${{ secrets.GCP_PROJECT }}/react-app
 
     - name: Build NestJS API using Nx
@@ -46,7 +46,7 @@ jobs:
 
     - name: Build and push Docker image for API
       run: |
-        docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/api-app ./apps/api/Dockerfile .
+        docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/api-app -f ./apps/api/Dockerfile .
         docker push gcr.io/${{ secrets.GCP_PROJECT }}/api-app
 
     - name: Set up Google Cloud SDK
