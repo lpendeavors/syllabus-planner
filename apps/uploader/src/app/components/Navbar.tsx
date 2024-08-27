@@ -23,7 +23,7 @@ export default function Navbar() {
               How It Works
             </a>
             <a
-              href="#"
+              href="#upload"
               className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
             >
               Upload
@@ -67,7 +67,7 @@ export default function Navbar() {
             How It Works
           </a>
           <a
-            href="#"
+            href="#upload"
             className="block px-4 py-2 text-gray-600 hover:bg-gray-100 hover:text-blue-500"
           >
             Upload

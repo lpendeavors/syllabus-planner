@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'https://api-app-oe2nj3sqxq-uc.a.run.app/api';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
 
 export const uploadSyllabi = async (files: FileList) => {
   const formData = new FormData();

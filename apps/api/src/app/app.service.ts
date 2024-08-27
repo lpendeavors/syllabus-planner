@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { pdfToText } from 'pdf-ts';
 import * as mammoth from 'mammoth';
 import OpenAI from 'openai';
+import * as Tesseract from 'tesseract.js';
 
 @Injectable()
 export class AppService {
@@ -20,6 +21,8 @@ export class AppService {
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     ) {
       text = await this.processWord(file.buffer);
+    } else if (file.mimetype.startsWith('image/')) {
+      text = await this.processImage(file.buffer);
     } else {
       throw new Error('Unsupported file type');
     }
@@ -41,12 +44,21 @@ export class AppService {
     return result.value;
   }
 
+  private async processImage(buffer: Buffer) {
+    const { data } = await Tesseract.recognize(buffer, 'eng');
+    return data.text;
+  }
+
   private async processText(text: string) {
     const prompt = `
       Given the following syllabus text, extract the following information and provide the response in JSON format:
       1. Lecture and reading schedule (with dates, topics, and readings)
       2. Key dates for exams and assignments (be extra sure not to miss any)
       3. Grading breakdown of assignments
+
+      Notes: Some syllaubi may have date and time and so include both if available.. Dates should be javascript 
+      format Date objects with fallback of using string if not possible. If an exam date overlaps with a lecture,
+      just include the exam date in the key dates.
 
       Ensure the JSON format is strictly as follows:
 
@@ -58,7 +70,7 @@ export class AppService {
         "description": "string",
         "lectureSchedule": [
           {
-            "date": "string",
+            "date": Date | "string",
             "topic": "string",
             "readings": [
               "string"
@@ -69,7 +81,7 @@ export class AppService {
           "exams": [
             {
               "name": "string",
-              "date": "string",
+              "date": Date | "string",
               "coverage": "string",
               "points": number,
             }
@@ -77,7 +89,7 @@ export class AppService {
           "assignments": [
             {
               "name": "string",
-              "date": "string",
+              "date": Date | "string",
               "points": number,
             }
           ]
@@ -88,7 +100,7 @@ export class AppService {
             "points": number,
             "percentage": number,
             "dates": [
-              "string"
+              Date | "string"
             ]
           }
         ]

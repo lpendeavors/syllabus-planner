@@ -1,19 +1,22 @@
 export interface LectureSchedule {
-  date: string;
+  id?: string;
+  date?: Date | string;
   topic: string;
   readings: string[];
 }
 
 export interface Exam {
+  id?: string;
   name: string;
-  date: string;
+  date?: Date | string;
   coverage: string;
   points: number;
 }
 
 export interface Assignment {
+  id?: string;
   name: string;
-  date: string;
+  date?: Date | string;
   points: number;
 }
 
@@ -26,7 +29,7 @@ export interface GradingBreakdown {
   component: string;
   points: number;
   percentage: number;
-  dates: string[];
+  dates: Date[] | string[];
 }
 
 export interface Course {

@@ -1,6 +1,6 @@
 {
   "name": "@syllabus-planner/source",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "license": "MIT",
   "scripts": {},
   "private": true,
@@ -34,6 +34,7 @@
     "@types/node": "~18.16.9",
     "@types/react": "18.3.1",
     "@types/react-dom": "18.3.0",
+    "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^7.16.0",
     "@typescript-eslint/parser": "^7.16.0",
     "autoprefixer": "10.4.13",
@@ -60,11 +61,13 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "@google-cloud/vision": "^4.3.2",
     "@heroicons/react": "^2.1.5",
     "@nestjs/common": "^10.0.2",
     "@nestjs/core": "^10.0.2",
     "@nestjs/platform-express": "^10.0.2",
     "axios": "^1.6.0",
+    "date-fns": "^3.6.0",
     "firebase": "^10.13.0",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.2",
@@ -72,10 +75,13 @@
     "openai": "^4.56.0",
     "pdf-ts": "^0.0.2",
     "react": "18.3.1",
+    "react-datepicker": "^7.3.0",
     "react-dom": "18.3.1",
     "react-router-dom": "6.11.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0",
-    "tslib": "^2.3.0"
+    "tesseract.js": "^5.1.1",
+    "tslib": "^2.3.0",
+    "uuid": "^10.0.0"
   }
 }

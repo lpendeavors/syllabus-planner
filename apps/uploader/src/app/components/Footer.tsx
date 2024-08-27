@@ -17,7 +17,7 @@ export default function Footer() {
           </div>
 
           {/* Footer Links */}
-          <div className="space-x-8">
+          {/* <div className="space-x-8">
             <a href="#" className="text-gray-400 hover:text-white">
               Privacy Policy
             </a>
@@ -27,7 +27,7 @@ export default function Footer() {
             <a href="#" className="text-gray-400 hover:text-white">
               Contact
             </a>
-          </div>
+          </div> */}
         </div>
       </div>
     </footer>
